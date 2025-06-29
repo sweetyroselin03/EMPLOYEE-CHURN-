@@ -61,5 +61,5 @@ if submitted:
 # ---------- FOOTER ----------
 st.markdown("""---  
 <p style='text-align: center; font-size: 14px; color: gray'>
-Made with ❤️ by Your Name | © 2025
+EMPLOYEE CHURN PREDICTOR | © 2025
 </p>""", unsafe_allow_html=True)
