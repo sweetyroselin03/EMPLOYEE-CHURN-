@@ -68,7 +68,7 @@ def attrition_app():
 
     if st.button("Logout"):
         st.session_state.logged_in = False
-        st.experimental_rerun()
+        st.rerun()
 
 # --------------------- PAGE ROUTING ---------------------
 if not st.session_state.logged_in:
