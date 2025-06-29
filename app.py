@@ -1,59 +1,49 @@
 import streamlit as st
-from PIL import Image
 import numpy as np
 
-# --- Set up the page ---
-st.set_page_config(page_title="HR Portal - Attrition Predictor", page_icon="🧠", layout="centered")
+# --------------------- SETUP ---------------------
+st.set_page_config(page_title="HR Login - Attrition Predictor", page_icon="🔐", layout="centered")
 
-# --- HR login credentials ---
-HR_USERNAME = "hr_admin"
-HR_PASSWORD = "password123"
-
-# --- Initialize session state ---
+# --------------------- SESSION SETUP ---------------------
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
-# --- Login Page ---
+# --------------------- HR CREDENTIALS ---------------------
+HR_USERNAME = "hr_admin"
+HR_PASSWORD = "password123"  # You can improve this using keyring or encrypted auth
+
+# --------------------- LOGIN PAGE ---------------------
 def login_page():
-    st.markdown("<h2 style='text-align: center;'>🔐 HR Login Portal</h2>", unsafe_allow_html=True)
+    st.title("🔐 HR Login")
 
-    # Centered logo
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.image("https://cdn-icons-png.flaticon.com/512/3135/3135715.png", width=100)
-
-    st.markdown("<p style='text-align:center; color: gray;'>Enter your credentials to access the HR tools</p>", unsafe_allow_html=True)
-
-    # Login form
     with st.form("login_form"):
-        username = st.text_input("Username", placeholder="Enter username")
-        password = st.text_input("Password", type="password", placeholder="Enter password")
-        login_btn = st.form_submit_button("🔓 Login")
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
+        submit = st.form_submit_button("Login")
 
-        if login_btn:
+        if submit:
             if username == HR_USERNAME and password == HR_PASSWORD:
                 st.session_state.logged_in = True
-                st.success("✅ Login successful!")
-                st.experimental_rerun()
+                st.success("Login successful. Welcome HR!")
             else:
-                st.error("❌ Invalid username or password.")
+                st.error("Invalid credentials. Try again.")
 
-# --- Prediction Function ---
+# --------------------- PREDICTION LOGIC ---------------------
 def predict_attrition(projects, hours, time_spent, accident, promotion, salary):
     accident_val = 0 if accident == "No" else 1
     promotion_val = 0 if promotion == "No" else 1
     salary_map = {"Low": 0, "Medium": 1, "High": 2}
     salary_val = salary_map[salary]
 
-    # Simple logic for demo purposes
+    # Dummy prediction
     if hours > 200 and projects <= 3 and promotion_val == 0 and salary_val == 0:
-        return 1
-    return 0
+        return 1  # Will leave
+    return 0  # Will stay
 
-# --- Dashboard Page ---
-def dashboard():
-    st.markdown("<h2 style='text-align: center;'>👩‍💼 HR Dashboard</h2>", unsafe_allow_html=True)
-    st.markdown("Use this form to predict employee attrition:")
+# --------------------- MAIN APP ---------------------
+def attrition_app():
+    st.title("💼 Employee Attrition Predictor")
+    st.markdown("Welcome, HR! Use this tool to predict if an employee is likely to leave.")
 
     with st.form("attrition_form"):
         col1, col2 = st.columns(2)
@@ -76,13 +66,12 @@ def dashboard():
         else:
             st.success("🟢 The employee is likely to **stay**.")
 
-    # Logout
-    if st.button("🔒 Logout"):
+    if st.button("Logout"):
         st.session_state.logged_in = False
         st.experimental_rerun()
 
-# --- Routing Logic ---
-if st.session_state.logged_in:
-    dashboard()
-else:
+# --------------------- PAGE ROUTING ---------------------
+if not st.session_state.logged_in:
     login_page()
+else:
+    attrition_app()
